@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b66d8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="展開舟">
+<title>展開舟 Ver.3.5</title>
+<style>
+:root{--bg:#f2f6fb;--card:#fff;--ink:#112033;--muted:#69788e;--line:#d9e2ee;--blue:#0b66d8;--blue2:#2b8be7;--green:#0b9a62;--orange:#e6811f;--red:#d84949}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI",sans-serif}body{min-height:100dvh}
+header{position:sticky;top:0;z-index:30;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:white;box-shadow:0 4px 16px #0b4c9f2b}header h1{margin:0;font-size:24px}header p{margin:4px 0 0;font-size:12px;opacity:.92}
+main{max-width:980px;margin:auto;padding:12px 12px calc(116px + env(safe-area-inset-bottom))}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px;margin:10px 0;box-shadow:0 4px 18px #1b34500c}.notice{background:#fff8eb;border-color:#efd8b3}.sub{font-size:12px;line-height:1.55;color:var(--muted)}
+.gridTop{display:grid;grid-template-columns:1.3fr .7fr .9fr;gap:8px}.gridWind{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}.field label,.boat label{display:block;font-size:10px;color:var(--muted);margin:0 0 4px}.field input,.field select,.boat input,.boat select{width:100%;min-height:42px;border:1px solid #cad5e3;border-radius:10px;background:#fff;padding:9px;font-size:16px;color:var(--ink)}
+.profile{margin-top:10px;padding:10px;border-radius:12px;background:#f6f9fd;border:1px solid #dbe6f2}.profile b{font-size:13px}.profile .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.chip{font-size:11px;padding:5px 7px;border-radius:999px;background:#eaf3ff;color:#0e5dbc;font-weight:800}.chip.warn{background:#fff1e8;color:#a75316}.chip.good{background:#eaf8f0;color:#14764f}
+.sectionTitle{font-weight:800;margin-bottom:6px}.boats{display:grid;gap:9px}.boat{display:grid;grid-template-columns:42px 72px 72px repeat(6,88px);gap:7px;align-items:end;border:1px solid var(--line);border-radius:14px;padding:9px;overflow-x:auto;background:#fff;scrollbar-width:none}.boat::-webkit-scrollbar{display:none}.lane{width:38px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;border:1px solid #c7d0dd}.l1{background:#fff}.l2{background:#222;color:#fff}.l3{background:#e95b5b;color:#fff}.l4{background:#4f7fe5;color:#fff}.l5{background:#f0d84d}.l6{background:#48a768;color:#fff}
+.actions{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:9px;background:linear-gradient(180deg,#f2f6fb00,#f2f6fb 28%)}button{min-height:52px;border-radius:14px;font-size:16px;font-weight:900;border:0}.secondary{width:36%;background:#fff;color:var(--blue);border:1px solid #b9c9dc}.primary{flex:1;background:var(--blue);color:#fff;box-shadow:0 8px 20px #0b66d82d}.primary:active,.secondary:active{transform:scale(.99)}
+.hidden{display:none}.resultHead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.badge{font-size:11px;background:#eaf3ff;color:#0e5dbc;padding:6px 8px;border-radius:999px;font-weight:800}.scenario{font-size:20px;font-weight:900;margin:7px 0}.flow{overflow:auto;white-space:nowrap;padding:7px 0;font-size:13px}.rank{display:grid;grid-template-columns:38px 1fr 48px;gap:8px;align-items:center;border-top:1px solid var(--line);padding:8px 0}.bar{height:9px;background:#edf2f7;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#13a06d,var(--blue));border-radius:999px}.mini{font-size:10px;color:var(--muted);margin-top:4px}.score{text-align:right;font-weight:900}.tickets{display:flex;flex-wrap:wrap;gap:7px}.ticket{background:#101b2b;color:#fff;border-radius:10px;padding:9px 11px;font-weight:900;letter-spacing:.05em}.installHint{font-size:11px;color:var(--muted);text-align:center;margin-top:8px}
+@media(max-width:620px){main{padding-left:9px;padding-right:9px}.gridTop{grid-template-columns:1fr 78px}.gridTop .field:nth-child(3){grid-column:1/-1}.gridWind{grid-template-columns:1fr 1fr}.gridWind .field:nth-child(3){grid-column:1/-1}.boat{grid-template-columns:40px 68px 68px repeat(6,82px);padding:8px}.card{border-radius:14px}.scenario{font-size:18px}}
+
+/* Ver.3.4: 6艇をまとめて横スクロール */
+.boatsScroll{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:8px;
+}
+.boatsScroll #boats{
+  min-width:860px;
+}
+.boatsScroll .boat{
+  min-width:860px;
+  overflow:visible !important;
+}
+
+/* Ver.3.5: 買い目と軸艇を見やすく */
+.betBlock{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#f8fbff}
+.betBlock.mid{background:#fffaf2;border-color:#ead8b7}
+.betTitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;font-weight:900}
+.betTitle small{font-size:10px;color:var(--muted);font-weight:700}
+.axisRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.axisBadge{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:#eef4fb;font-weight:900;font-size:13px}
+.axisNum{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;border:1px solid #aeb9c7}
+.ticket.main{background:#10243d}
+.ticket.mid{background:#6b4b1f}
+.ticket .axisNum{width:23px;height:23px;border-radius:6px;font-size:14px;vertical-align:middle;margin:-3px 1px}
+.ticketParts{display:inline-flex;align-items:center;gap:3px}
+.ticketSep{opacity:.72}
+
+</style>
+</head>
+<body>
+<header><h1>展開舟</h1><p>24場 × コース別ST × 1着率 × 前付けで、1Mの攻め・壁・凹み・残しを読む</p></header>
+<main>
+<section class="card notice"><b>Ver.3.5 買い目強化版</b><div class="sub">6艇一括スクロールはそのまま。本命6点＋中穴候補6点を表示し、そのレースの軸艇を艇色で見やすく表示します。</div></section>
+<section class="card">
+ <div class="gridTop">
+  <div class="field"><label>場</label><select id="venue"></select></div>
+  <div class="field"><label>R</label><select id="raceNo"></select></div>
+  <div class="field"><label>進入</label><select id="entry"><option value="normal">枠なり想定</option><option value="custom">前付け / 進入変更</option><option value="unknown">不明 / 展示で確認</option></select></div>
+ </div>
+ <div class="gridWind">
+  <div class="field"><label>風速 m/s</label><input id="wind" type="number" inputmode="decimal" step="0.1" value="3"></div>
+  <div class="field"><label>風向</label><select id="windDir"><option value="none">不明</option><option value="head">向かい風</option><option value="tail">追い風</option><option value="cross">横風</option></select></div>
+  <div class="field"><label>潮・水面</label><select id="water"><option value="normal">通常</option><option value="high">潮位高め / 水面重め</option><option value="low">潮位低め / 水面軽め</option><option value="rough">荒れ気味</option></select></div>
+ </div>
+ <div id="venueProfile" class="profile"></div>
+</section>
+<section class="card"><div class="sectionTitle">6艇データ</div><div class="sub">STは「0.14」、展示F.03は「-0.03」で入力。</div><div class="boatsScroll"><div id="boats" class="boats"></div></div></section>
+<section id="result" class="card hidden"></section>
+<div class="installHint">Safariでホーム画面追加すればアプリ風に使えます。</div>
+</main>
+<div class="actions"><button id="sample" class="secondary">サンプル</button><button id="analyze" class="primary">展開を読む</button></div>
+<script>
+'use strict';
+const venueNames=['桐生','戸田','江戸川','平和島','多摩川','浜名湖','蒲郡','常滑','津','三国','びわこ','住之江','尼崎','鳴門','丸亀','児島','宮島','徳山','下関','若松','芦屋','福岡','唐津','大村'];
+// 展開舟の暫定補正。正確な統計値ではなく、場の一般的な水面傾向を弱く反映するためのヒューリスティック。
+const venueProfiles={
+'桐生':{in:2,out:1,vol:2,wind:3,note:'風の影響を受ける日はスタート隊形を重視。'},
+'戸田':{in:-6,out:5,vol:6,wind:2,note:'イン絶対視を弱め、2〜4コースの攻めを少し強めに評価。'},
+'江戸川':{in:-3,out:3,vol:8,wind:6,note:'潮・風・うねりの影響が大きい。荒水面では技量と展示を優先。'},
+'平和島':{in:-2,out:3,vol:4,wind:3,note:'センター〜外の展開突入をやや評価。'},
+'多摩川':{in:2,out:1,vol:2,wind:2,note:'比較的素直。選手力とST隊形を優先。'},
+'浜名湖':{in:1,out:2,vol:3,wind:4,note:'広い水面。風が強い日は外の攻め評価を調整。'},
+'蒲郡':{in:4,out:0,vol:2,wind:2,note:'イン残しをややプラス。基本は力量重視。'},
+'常滑':{in:2,out:2,vol:3,wind:3,note:'風とセンター勢のST差を確認。場補正は弱め。'},
+'津':{in:2,out:1,vol:3,wind:4,note:'風が強い日はスリット隊形を重視。'},
+'三国':{in:2,out:2,vol:4,wind:5,note:'風の影響を受ける日はセンター攻めの成否を重視。'},
+'びわこ':{in:-1,out:2,vol:4,wind:4,note:'水面変化がある日は展示気配を少し重く。'},
+'住之江':{in:5,out:-1,vol:1,wind:1,note:'イン残しをやや強めに評価。選手力差が素直に出る想定。'},
+'尼崎':{in:4,out:0,vol:2,wind:2,note:'イン優位を少し加点。2コース差しも評価。'},
+'鳴門':{in:0,out:3,vol:5,wind:6,note:'風の影響が強い日はセンター・外の攻め評価を上げやすい。'},
+'丸亀':{in:4,out:0,vol:2,wind:3,note:'イン残しをややプラス。ナイターでもST基礎力重視。'},
+'児島':{in:3,out:1,vol:3,wind:3,note:'インを少し加点しつつ、潮・風で調整。'},
+'宮島':{in:1,out:2,vol:5,wind:4,note:'潮位差の影響を想定。水面条件で外攻め評価が動く。'},
+'徳山':{in:7,out:-2,vol:1,wind:2,note:'イン残しを強めに評価。ただしST凹みなら補正を打ち消す。'},
+'下関':{in:5,out:0,vol:2,wind:3,note:'イン残しをやや強め。センターの平均ST差が大きい時だけ外攻め。'},
+'若松':{in:3,out:1,vol:3,wind:4,note:'風・潮を見つつインを少し加点。'},
+'芦屋':{in:6,out:-1,vol:1,wind:2,note:'イン残しを強めに評価。2着以降の展開拾いを重視。'},
+'福岡':{in:-1,out:3,vol:5,wind:4,note:'1Mの展開変化をやや大きく見る。センター攻めに注意。'},
+'唐津':{in:4,out:0,vol:2,wind:3,note:'インをやや加点。平均ST上位の差し・まくり差しを相手に。'},
+'大村':{in:8,out:-3,vol:1,wind:2,note:'イン残しを最も強めに評価。ただし①自身のST/地力が弱い時は過信しない。'}
+};
+const defaults=[
+ {cls:'A2',course:1,avg:.16,cst:.16,cwin:55,ex:.12,time:6.81,nat:5.56},
+ {cls:'A1',course:2,avg:.14,cst:.14,cwin:30,ex:-.03,time:6.76,nat:6.55},
+ {cls:'B2',course:3,avg:.21,cst:.21,cwin:8,ex:.34,time:6.81,nat:1.50},
+ {cls:'B2',course:4,avg:.22,cst:.22,cwin:7,ex:.22,time:6.76,nat:1.49},
+ {cls:'A2',course:5,avg:.15,cst:.15,cwin:12,ex:-.07,time:6.74,nat:6.28},
+ {cls:'B1',course:6,avg:.21,cst:.21,cwin:3,ex:-.08,time:6.81,nat:3.71}
+];
+const boatsEl=document.getElementById('boats'); const storeKey='tenkaibune_v3_course_entry';
+function safeNum(v,fallback=0){const n=Number(v);return Number.isFinite(n)?n:fallback} function clamp(x,a=0,b=100){return Math.max(a,Math.min(b,x))} function clsPts(c){return ({A1:14,A2:9,B1:4,B2:0})[c]||0}
+function initSelectors(){const v=document.getElementById('venue');venueNames.forEach(x=>{const o=document.createElement('option');o.value=x;o.textContent=x;v.appendChild(o)});v.value='常滑';const r=document.getElementById('raceNo');for(let i=1;i<=12;i++){const o=document.createElement('option');o.value=String(i);o.textContent=i+'R';r.appendChild(o)}r.value='5'}
+function makeRows(data){boatsEl.innerHTML='';data.forEach((d,i)=>{const n=i+1,el=document.createElement('div');el.className='boat';el.innerHTML=`<div class="lane l${n}">${n}</div><div><label>級別</label><select data-k="cls"><option>A1</option><option>A2</option><option>B1</option><option>B2</option></select></div><div><label>進入</label><select data-k="course">${[1,2,3,4,5,6].map(c=>`<option value="${c}">${c}C</option>`).join('')}</select></div><div><label>平均ST</label><input data-k="avg" inputmode="decimal" value="${d.avg ?? .20}"></div><div><label>コースST</label><input data-k="cst" inputmode="decimal" value="${d.cst ?? d.avg ?? .20}"></div><div><label>1着率%</label><input data-k="cwin" inputmode="decimal" value="${d.cwin ?? 0}"></div><div><label>展示ST</label><input data-k="ex" inputmode="decimal" value="${d.ex ?? .20}"></div><div><label>展示タイム</label><input data-k="time" inputmode="decimal" value="${d.time ?? 6.90}"></div><div><label>全国勝率</label><input data-k="nat" inputmode="decimal" value="${d.nat ?? 0}"></div>`;boatsEl.appendChild(el);el.querySelector('[data-k="cls"]').value=d.cls||'B1';el.querySelector('[data-k="course"]').value=String(d.course??n)});syncEntryUI();bindAutosave()}
+function getData(){return [...document.querySelectorAll('.boat')].map((r,i)=>{const v=k=>r.querySelector(`[data-k="${k}"]`).value;return{lane:i+1,course:safeNum(v('course'),i+1),cls:v('cls'),avg:safeNum(v('avg'),.20),cst:safeNum(v('cst'),safeNum(v('avg'),.20)),cwin:safeNum(v('cwin'),0),ex:safeNum(v('ex'),.20),time:safeNum(v('time'),6.90),nat:safeNum(v('nat'),0)}})}
+function syncEntryUI(){const mode=document.getElementById('entry').value;document.querySelectorAll('.boat').forEach((r,i)=>{const el=r.querySelector('[data-k="course"]');if(!el)return;if(mode==='normal'){el.value=String(i+1);el.disabled=true}else{el.disabled=false}})}
+function currentRace(){return `${document.getElementById('venue').value} ${document.getElementById('raceNo').value}R`}
+function save(){try{localStorage.setItem(storeKey,JSON.stringify({venue:document.getElementById('venue').value,raceNo:document.getElementById('raceNo').value,entry:document.getElementById('entry').value,wind:document.getElementById('wind').value,windDir:document.getElementById('windDir').value,water:document.getElementById('water').value,boats:getData()}))}catch(e){}}
+function load(){try{const x=JSON.parse(localStorage.getItem(storeKey));if(x&&Array.isArray(x.boats)&&x.boats.length===6){['venue','raceNo','entry','wind','windDir','water'].forEach(k=>{if(x[k]!=null&&document.getElementById(k))document.getElementById(k).value=x[k]});makeRows(x.boats);updateProfile();return}}catch(e){}makeRows(defaults);updateProfile()}
+function bindAutosave(){document.querySelectorAll('input,select').forEach(el=>{el.oninput=()=>{save();if(['venue','wind','windDir','water'].includes(el.id))updateProfile()};el.onchange=()=>{if(el.id==='entry')syncEntryUI();save();if(['venue','wind','windDir','water'].includes(el.id))updateProfile()}})}
+function updateProfile(){const venue=document.getElementById('venue').value,p=venueProfiles[venue],wind=safeNum(document.getElementById('wind').value,0),dir=document.getElementById('windDir').value,water=document.getElementById('water').value;let chips=[];chips.push(`<span class="chip ${p.in>=5?'good':p.in<=-3?'warn':''}">イン補正 ${p.in>=0?'+':''}${p.in}</span>`);chips.push(`<span class="chip">外攻め ${p.out>=0?'+':''}${p.out}</span>`);chips.push(`<span class="chip ${p.vol>=5?'warn':''}">変動度 ${p.vol}/8</span>`);if(wind>=5)chips.push(`<span class="chip warn">強風補正 ON</span>`);if(dir!=='none')chips.push(`<span class="chip">${({head:'向かい風',tail:'追い風',cross:'横風'})[dir]}</span>`);if(water!=='normal')chips.push(`<span class="chip warn">水面補正 ON</span>`);document.getElementById('venueProfile').innerHTML=`<b>${venue}の展開舟プロファイル</b><div class="sub">${p.note}</div><div class="chips">${chips.join('')}</div>`}
+
+function axisColorLabel(lane){return `${lane}号艇`}
+function ticketHtml(txt,axis,kind='main'){
+ const parts=txt.split('-').map(Number);
+ return `<span class="ticket ${kind}"><span class="ticketParts">${parts.map((n,i)=>`${i?'<span class="ticketSep">-</span>':''}${n===axis?`<span class="axisNum l${n}">${n}</span>`:`<span>${n}</span>`}`).join('')}</span></span>`
+}
+function analyze(){const b=getData(),venue=document.getElementById('venue').value,p=venueProfiles[venue],wind=safeNum(document.getElementById('wind').value,0),dir=document.getElementById('windDir').value,water=document.getElementById('water').value,entryMode=document.getElementById('entry').value;
+ const courses=b.map(x=>x.course);if(new Set(courses).size!==6||courses.some(c=>c<1||c>6)){alert('進入コースは1〜6を重複なしで設定してね。');return}
+ const order=[...b].sort((a,c)=>a.course-c.course),byCourse=Object.fromEntries(order.map(x=>[x.course,x]));
+ b.forEach(x=>{const baseST=(x.cst>0&&x.cst<.5)?x.cst:x.avg;const avgStart=clamp((.25-x.avg)*185,0,28);const courseStart=clamp((.25-baseST)*220,0,34);const exStart=clamp((.20-x.ex)*50,-4,14);const feet=clamp((6.95-x.time)*45,0,14);const ability=clamp((x.nat-2)*5+clsPts(x.cls),0,35);const inside=(7-x.course)*2.2;const courseWin=clamp(x.cwin*.28,0,22);const frontMove=Math.max(0,x.lane-x.course);const deepPenalty=frontMove*1.6;x.attack=clamp(avgStart*.35+courseStart*.65+exStart+feet+ability+inside+courseWin*.25-deepPenalty);x.hold=clamp(ability+courseStart*.75+courseWin*.45+(x.course===1?24:0)+(x.course===2?8:0)-deepPenalty*.5);x.wall=clamp(courseStart*.65+ability*.35+(x.course<=3?12:4)-Math.max(0,(baseST-.18)*120)-deepPenalty*.4);x.baseST=baseST;x.frontMove=frontMove});
+ // 実際の進入順で隣接ST差を評価
+ for(let i=1;i<order.length;i++){const left=order[i-1],cur=order[i],gap=left.baseST-cur.baseST;if(gap>=.04){cur.attack=clamp(cur.attack+8);left.wall=clamp(left.wall-7)}if(gap<=-.04)cur.attack=clamp(cur.attack-4)}
+ // 前付け・進入変更は隊形の不確実性を少し上げる
+ if(entryMode!=='normal'){b.forEach(x=>{x.wall=clamp(x.wall-2)});order.filter(x=>x.frontMove>0).forEach(x=>x.attack=clamp(x.attack-1.5*x.frontMove))}
+ // 場別補正（進入コース基準）
+ const inner=byCourse[1];if(inner){inner.hold=clamp(inner.hold+p.in);inner.attack=clamp(inner.attack+p.in*.35)}for(const x of b){if(x.course!==1)x.attack=clamp(x.attack+p.out*(x.course>=3?1:.5))}
+ // 風補正
+ const w=Math.min(wind,10); if(w>=3){if(dir==='head'){if(inner)inner.hold=clamp(inner.hold-w*.8);for(const x of b.filter(x=>x.course>=3))x.attack=clamp(x.attack+w*.65)}else if(dir==='tail'){if(inner)inner.hold=clamp(inner.hold+w*.55);if(byCourse[2])byCourse[2].attack=clamp(byCourse[2].attack+w*.25)}else if(dir==='cross'){for(const x of b.filter(x=>x.course>=3))x.attack=clamp(x.attack+w*.35);b.forEach(x=>x.wall=clamp(x.wall-w*.18))}}
+ if(water==='rough'){b.forEach(x=>{x.attack=clamp(x.attack+(x.cls==='A1'?3:x.cls==='A2'?2:0));x.wall=clamp(x.wall-3)});if(inner)inner.hold=clamp(inner.hold-2)}else if(water==='high'){if(inner)inner.hold=clamp(inner.hold-1);for(const x of b.filter(x=>x.course>=3))x.attack=clamp(x.attack+1.5)}else if(water==='low'){if(inner)inner.hold=clamp(inner.hold+1.5)}
+ const sorted=[...b].sort((a,c)=>c.attack-a.attack),attacker=sorted[0],second=byCourse[2];let scenario,detail;if(inner&&inner.hold>=72&&(attacker.course===1||inner.attack>=sorted[1].attack-6)){scenario=`${inner.lane}号艇イン先マイ本線`;detail='1コース艇の残し性能が高め。外の攻めは2着争いに回りやすい。'}else if(second&&inner&&second.attack>=inner.hold+4){scenario=`${second.lane}号艇が2コースから差し・握り両睨み`;detail='2コース艇のコース別STと1着率を加味。3コース艇が壁にならない場合は握る展開まで。'}else if(attacker.course>=4){scenario=`${attacker.lane}号艇（${attacker.course}コース）の外攻め警戒`;detail=`${attacker.lane}号艇のコース別ST・足・地力が高い。内の凹み次第で1Mへ突入。`}else{scenario=`${attacker.lane}号艇（${attacker.course}コース）が攻めの起点`;detail=`実進入${order.map(x=>x.lane).join('-')}で、${attacker.lane}号艇を中心に内残しと外連動を見る。`}
+ b.forEach(x=>{const coursePenalty=(x.course-1)*3.7;const cwinFirst=clamp(x.cwin*.38,0,30);x.first=clamp(x.attack*.50+x.hold*.34+cwinFirst-coursePenalty+(x.course===1?p.in*.6:0));x.second=clamp(x.attack*.48+x.hold*.20+x.wall*.12+(x.course>=4?5:0)+clamp(x.cwin*.08,0,6));x.third=clamp(x.attack*.32+x.wall*.30+x.hold*.12+(x.course>=5?8:0))});
+ // 軸艇：1〜3着すべてで安定して絡みやすい艇を総合評価
+ b.forEach(x=>x.axisScore=x.first*.48+x.second*.34+x.third*.18);
+ const axisBoat=[...b].sort((a,c)=>c.axisScore-a.axisScore)[0];
+ const axis=axisBoat.lane;
+
+ // 全120通りを評価。軸を含む組み合わせから本命・中穴候補を分ける
+ const combos=[];
+ for(const a of b)for(const c of b)for(const d of b){
+   if(new Set([a.lane,c.lane,d.lane]).size<3)continue;
+   const sc=a.first*1.22+c.second+d.third*.82;
+   combos.push({txt:`${a.lane}-${c.lane}-${d.lane}`,sc,lanes:[a.lane,c.lane,d.lane],head:a.lane});
+ }
+ const axisCombos=combos.filter(x=>x.lanes.includes(axis)).sort((a,c)=>c.sc-a.sc);
+ const mainPicks=axisCombos.slice(0,6);
+
+ // オッズ入力なしなので「中穴」は展開上の次点候補。
+ // 本命の直後だけで固めず、頭替わり・外枠絡みを少し優先して6点を選ぶ。
+ const mainSet=new Set(mainPicks.map(x=>x.txt));
+ const headTop=[...b].sort((a,c)=>c.first-a.first).slice(0,2).map(x=>x.lane);
+ const midPool=axisCombos.filter(x=>!mainSet.has(x.txt)).slice(0,30).map((x,idx)=>{
+   const outer=x.lanes.filter(n=>b[n-1].course>=4).length;
+   const headAlt=headTop.includes(x.head)?0:1;
+   return {...x,midScore:x.sc + outer*2.2 + headAlt*4.5 - idx*.18};
+ }).sort((a,c)=>c.midScore-a.midScore);
+ const midPicks=[]; const usedHeads={};
+ for(const x of midPool){
+   const hc=usedHeads[x.head]||0;
+   if(hc>=3)continue;
+   midPicks.push(x);usedHeads[x.head]=hc+1;
+   if(midPicks.length===6)break;
+ }
+ // 足りない時は次点から補完
+ if(midPicks.length<6){
+   for(const x of axisCombos){
+     if(mainSet.has(x.txt)||midPicks.some(y=>y.txt===x.txt))continue;
+     midPicks.push(x);if(midPicks.length===6)break;
+   }
+ }
+ const weak=b.filter(x=>x.baseST>=.20&&x.ex>=.20).map(x=>x.lane),fast=b.filter(x=>x.baseST<=.15).map(x=>x.lane),front=order.filter(x=>x.frontMove>0),out=document.getElementById('result');out.classList.remove('hidden');out.innerHTML=`<div class="resultHead"><div><b>${currentRace()} 展開予測</b><div class="scenario">${scenario}</div></div><span class="badge">Ver.3.5</span></div><div class="sub">${detail}</div><div class="profile"><b>${venue}補正</b><div class="sub">${p.note} 風速${wind}m/s・${({none:'風向不明',head:'向かい風',tail:'追い風',cross:'横風'})[dir]}・水面${({normal:'通常',high:'重め',low:'軽め',rough:'荒れ気味'})[water]}で微調整。</div></div><div class="flow"><b>進入</b> → ${order.map(x=>`${x.course}C:${x.lane}号艇`).join('　')}</div>${front.length?`<div class="sub">前付け：<b>${front.map(x=>`${x.lane}号艇→${x.course}C`).join('・')}</b>　※深い起こしの可能性を弱く減点</div>`:''}<div class="flow"><b>コース別ST</b> → ${order.map(x=>`${x.lane}:${x.baseST.toFixed(2)}`).join('　')}</div><div class="flow"><b>コース別1着率</b> → ${order.map(x=>`${x.lane}:${x.cwin.toFixed(0)}%`).join('　')}</div>${weak.length?`<div class="sub">凹み候補：<b>${weak.join('・')}</b>　／　ST上位：<b>${fast.join('・')||'なし'}</b></div>`:''}<h3>攻め指数</h3>${[...b].sort((a,c)=>c.attack-a.attack).map(x=>`<div class="rank"><div class="lane l${x.lane}">${x.lane}</div><div><div class="bar"><i style="width:${x.attack}%"></i></div><div class="mini">${x.course}C / 残し ${x.hold.toFixed(0)} / 壁 ${x.wall.toFixed(0)}</div></div><div class="score">${x.attack.toFixed(0)}</div></div>`).join('')}<div class="axisRow"><span class="axisBadge">軸艇 <span class="axisNum l${axis}">${axis}</span> ${axis}号艇</span><span class="sub">1〜3着の総合安定度から選定</span></div><div class="betBlock"><div class="betTitle"><span>🔥 本命 6点</span><small>軸を含む上位展開</small></div><div class="tickets">${mainPicks.map(x=>ticketHtml(x.txt,axis,'main')).join('')}</div></div><div class="betBlock mid"><div class="betTitle"><span>🎯 中穴候補 6点</span><small>頭替わり・外絡みも加味</small></div><div class="tickets">${midPicks.map(x=>ticketHtml(x.txt,axis,'mid')).join('')}</div></div><p class="sub">※ オッズ未入力のため「中穴」は実オッズ判定ではなく、展開指数上の次点・ひねり目候補です。コース別STと1着率を全体平均STより強く反映し、前付け時は実進入順で壁・ST差を再計算します。</p>`;save();setTimeout(()=>out.scrollIntoView({behavior:'smooth',block:'start'}),50)}
+document.getElementById('analyze').addEventListener('click',analyze);document.getElementById('sample').addEventListener('click',()=>{document.getElementById('venue').value='常滑';document.getElementById('raceNo').value='5';document.getElementById('wind').value='3';document.getElementById('windDir').value='none';document.getElementById('water').value='normal';document.getElementById('entry').value='normal';makeRows(defaults);document.getElementById('result').classList.add('hidden');updateProfile();save()});
+initSelectors();load();bindAutosave();syncEntryUI();updateProfile();
+</script>
+</body>
+</html>
